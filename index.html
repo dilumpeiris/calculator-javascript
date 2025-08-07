@@ -1,8 +1,28 @@
-<html>
+<!doctype html>
+<html lang="en" class="h-full w-screen">
 	<head>
-	</head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Tailwind with JS</title>
+		<script src="https://cdn.tailwindcss.com"></script>
 		<script src="index.js"></script>
-	<body>
-		<h1>Hello World!</h1>
+	</head>
+	<body
+		class="h-screen w-screen flex items-center justify-center bg-gray-100"
+	>
+		<div
+			class="w-1/2 flex flex-col gap-1 items-center justify-center h-full"
+		>
+			<h1 class="text-3xl font-bold text-blue-600">Calculator.JS</h1>
+			<input
+				type="text"
+				placeholder=""
+				class="border border-gray-300 rounded w-full h-20 text-3xl text-gray-500"
+			/>
+			<div
+				id="calc-body"
+				class="text-blue-600 w-full h-3/4 flex flex-col items-center justify-center"
+			></div>
+		</div>
 	</body>
 </html>

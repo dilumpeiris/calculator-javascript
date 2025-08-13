@@ -1,3 +1,55 @@
+let moveCurser = function (rel, input) {
+	input.selectionStart = input.selectionEnd = input.selectionStart + rel;
+};
+let insertAtCurser = function (text, input) {
+	const selectionStart = input.selectionStart;
+	const selectionEnd = input.selectionEnd;
+
+	input.value =
+		input.value.slice(0, selectionStart) +
+		text +
+		input.value.slice(selectionEnd);
+
+	input.selectionStart = input.selectionEnd = selectionStart + text.length;
+
+	/* OR
+	moveCurser(
+		-1 * (input.value.length - (selectionStart + text.length)),
+		input
+	);
+	*/
+
+	input.focus();
+};
+
+let addToInput = function () {
+	const input = document.getElementById('input-box');
+	const result = document.getElementById('result');
+
+	switch (this.textContent) {
+		case 'AC':
+			input.value = '';
+			break;
+		case '=':
+			try {
+				result.textContent = eval(input.value) + ' =';
+				input.value = '';
+			} catch (e) {
+				result.textContent = 'ERROR =';
+				input.value = '';
+			} finally {
+				break;
+			}
+		case '()':
+			insertAtCurser(this.textContent, input);
+			moveCurser(-1, input);
+			break;
+
+		default:
+			insertAtCurser(this.textContent, input);
+	}
+};
+
 document.addEventListener('DOMContentLoaded', function () {
 	const calc_body = document.getElementById('calc-body');
 	const calc_operations = document.getElementById('calc-operations');
@@ -41,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function () {
 			'text-5xl',
 			'font-bold'
 		);
-
+		calc_sqr.onclick = addToInput;
 		calc_sqr.textContent = operations[i][1];
 		calc_operations.appendChild(calc_sqr);
 	}
@@ -72,6 +124,7 @@ document.addEventListener('DOMContentLoaded', function () {
 				'font-bold'
 			);
 
+			calc_sqr.onclick = addToInput;
 			calc_sqr.textContent = keypad[j][1];
 			calc_row.appendChild(calc_sqr);
 		}

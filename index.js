@@ -1,5 +1,6 @@
 let moveCurser = function (rel, input) {
 	input.selectionStart = input.selectionEnd = input.selectionStart + rel;
+	input.focus();
 };
 let insertAtCurser = function (text, input) {
 	const selectionStart = input.selectionStart;
@@ -18,10 +19,18 @@ let insertAtCurser = function (text, input) {
 		input
 	);
 	*/
-
 	input.focus();
 };
+let deleteAtCurser = function (input) {
+	const selectionStart = input.selectionStart;
+	const selectionEnd = input.selectionEnd;
 
+	input.value =
+		input.value.slice(0, selectionStart - 1) +
+		input.value.slice(selectionEnd);
+
+	input.selectionStart = input.selectionEnd = selectionStart - 1;
+};
 let addToInput = function () {
 	const input = document.getElementById('input-box');
 	const result = document.getElementById('result');
@@ -41,10 +50,27 @@ let addToInput = function () {
 				break;
 			}
 		case '()':
-			insertAtCurser(this.textContent, input);
+			let valueBefore = input.value[input.selectionEnd - 1];
+			let acceptedValues = ['+', '-', '/', '*', '%', '('];
+			if (acceptedValues.includes(valueBefore)) {
+				insertAtCurser(this.textContent, input);
+			} else {
+				insertAtCurser('*' + this.textContent, input);
+			}
 			moveCurser(-1, input);
 			break;
-
+		case '+/-':
+			input.value = '-(' + input.value + ')';
+			break;
+		case '<-':
+			moveCurser(-1, input);
+			break;
+		case '->':
+			moveCurser(1, input);
+			break;
+		case '<':
+			deleteAtCurser(input);
+			break;
 		default:
 			insertAtCurser(this.textContent, input);
 	}
@@ -57,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	let operations = [
 		['add', '+'],
 		['minus', '-'],
-		['mult', 'x'],
+		['mult', '*'],
 		['div', '/'],
 		['equal', '='],
 	];
@@ -78,6 +104,9 @@ document.addEventListener('DOMContentLoaded', function () {
 		['brack', '()'],
 		['0', '0'],
 		['dot', '.'],
+		['pop', '<'],
+		['ml', '<-'],
+		['mr', '->'],
 	];
 
 	for (let i = 0; i < 5; i++) {
@@ -98,7 +127,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		calc_operations.appendChild(calc_sqr);
 	}
 
-	for (let i = 0; i < 15; i += 3) {
+	for (let i = 0; i < 18; i += 3) {
 		const calc_row = document.createElement('div');
 		calc_row.classList.add(
 			'flex',
@@ -107,7 +136,8 @@ document.addEventListener('DOMContentLoaded', function () {
 			'h-full',
 			'items-center',
 			'justify-center',
-			'm-1'
+			'm-1',
+			'cursor-pointer'
 		);
 
 		for (let j = i; j < i + 3; j++) {
@@ -121,7 +151,8 @@ document.addEventListener('DOMContentLoaded', function () {
 				'justify-center',
 				'm-1',
 				'text-5xl',
-				'font-bold'
+				'font-bold',
+				'cursor-pointer'
 			);
 
 			calc_sqr.onclick = addToInput;
